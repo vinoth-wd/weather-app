@@ -2,11 +2,10 @@
 *{
   margin: 0;
   padding: 0;
-  box-sizing: border-box;
   font-family: "Poppins", serif;
 }
 .app{
-  background-image: linear-gradient(rgb(66, 0, 128),rgba(99, 128, 170, 0.932));
+  background: linear-gradient(135deg, #d4d8df, #255da5);
   display: grid;
   min-height: 100vh;
 }

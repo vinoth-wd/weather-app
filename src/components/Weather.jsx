@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import "bootstrap/dist/css/bootstrap.min.css";
 import "./Weather.css";
 import search_icon from "../assets/search.png";
 import clear_icon from "../assets/clear.png";
@@ -11,8 +12,8 @@ import wind_icon from "../assets/wind.png";
 
 const Weather = () => {
   const inputRef = useRef();
-  const [WeatherData, setWeatherData] = useState(false);
-  // icons
+  const [WeatherData, setWeatherData] = useState(null);
+
   const allIcons = {
     "01d": clear_icon,
     "01n": clear_icon,
@@ -27,7 +28,7 @@ const Weather = () => {
     "13d": snow_icon,
     "13n": snow_icon,
   };
-  // calling the openweather api
+
   async function search(city) {
     if (city === "") {
       alert("Enter the city name");
@@ -40,11 +41,9 @@ const Weather = () => {
       const response = await fetch(url);
       const data = await response.json();
       if (!response.ok) {
-        alert(data.message)
+        alert(data.message);
         return;
-        
       }
-      console.log(data);
       const icon = allIcons[data.weather[0].icon] || clear_icon;
       setWeatherData({
         humidity: data.main.humidity,
@@ -54,54 +53,65 @@ const Weather = () => {
         icon: icon,
       });
     } catch (error) {
-      setWeatherData(false)
+      setWeatherData(null);
       console.error(error);
     }
   }
+
   useEffect(() => {
     search("mumbai");
   }, []);
-  // The UI for the weather app
+
   return (
-    <div className="weather">
-      <div className="search">
-        <input ref={inputRef} type="text" placeholder="search" />
-        <img
-          src={search_icon}
-          alt="search png"
-          onClick={() => search(inputRef.current.value)}
-        />
-      </div>
-      {WeatherData ? 
-        <>
-          <img
-            src={WeatherData.icon}
-            alt="clear icon"
-            className="weather-icon"
+    <div className="container d-flex justify-content-center align-items-center min-vh-100">
+      <div className="weather p-4">
+        <div className="search d-flex align-items-center">
+          <input
+            ref={inputRef}
+            type="text"
+            className="form-control me-2"
+            placeholder="Enter city"
           />
-          <p className="temperature">{WeatherData.temperature}°C</p>
-          <p className="location">{WeatherData.location}</p>
-          <div className="weather-data">
-            <div className="col">
-              <img src={humidity_icon} alt="humidity-icon" />
-              <div>
-                <p>{WeatherData.humidity}%</p>
-                <span>Humidity</span>
+          <img
+            src={search_icon}
+            alt="search icon"
+            onClick={() => search(inputRef.current.value)}
+          />
+        </div>
+
+        {WeatherData ? (
+          <>
+            <img
+              src={WeatherData.icon}
+              alt="weather icon"
+              className="weather-icon"
+            />
+            <h2 className="temperature">{WeatherData.temperature}°C</h2>
+            <h3 className="location">{WeatherData.location}</h3>
+
+            <div className="row mt-4 text-white">
+              <div className="col-6 d-flex align-items-center justify-content-center">
+                <img src={humidity_icon} alt="humidity-icon" width="24px" />
+                <div className="ms-2">
+                  <p className="mb-0 text-white">{WeatherData.humidity}%</p>
+                  <small className="text-white">Humidity</small>
+                </div>
+              </div>
+              <div className="col-6 d-flex align-items-center justify-content-center">
+                <img src={wind_icon} alt="wind-icon" width="24px" />
+                <div className="ms-2">
+                  <p className="mb-0">{WeatherData.windspeed} km/h</p>
+                  <small>Wind Speed</small>
+                </div>
               </div>
             </div>
-            <div className="col">
-              <img src={wind_icon} alt="wind-icon" />
-              <div>
-                <p>{WeatherData.windspeed}km/h</p>
-                <span>wind speed</span>
-              </div>
-            </div>
-          </div>
-          <p className="footer">©weather app done by vinoth</p>
-        </>
-       : 
-        <></>
-      }
+
+            <p className="footer mt-3">© Weather App by Vinoth</p>
+          </>
+        ) : (
+          <p className="text-white mt-4">Loading...</p>
+        )}
+      </div>
     </div>
   );
 };
